@@ -7,5 +7,7 @@ export class CreateUser {
   async execute(name: string, email: string, password: string): Promise<User> {
     const user = new User(Date.now().toString(), name, email, password)
     return this.userRepository.save(user)
+
+    
   }
 }
