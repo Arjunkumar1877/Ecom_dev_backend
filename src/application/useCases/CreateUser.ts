@@ -1,13 +1,11 @@
 import { User } from '../../domain/entities/User'
-import { UserRepository } from '../../interfaces/repositories/UserRepository'
+import { UserRepository } from '../../interfaceAdapters/repositories/UserRepository'
 
 export class CreateUser {
-  constructor(private userRepository: UserRepository) {}
+    constructor(private userRepository: UserRepository) { }
 
-  async execute(name: string, email: string, password: string): Promise<User> {
-    const user = new User(Date.now().toString(), name, email, password)
-    return this.userRepository.save(user)
-
-    
-  }
+    async execute(name: string, email: string, password: string): Promise<User> {
+        const user = new User(Date.now().toString(), name, email, password)
+        return this.userRepository.save(user)
+    }
 }
