@@ -11,6 +11,7 @@ const UserSchema: Schema = new Schema({
   pincode: { type: Number },
   verified: { type: Boolean },
   image: { type: String },
+  otp: {type: String},
   landmark: { type: String },
   createdAt: { type: Number, default: Date.now },
   updatedAt: { type: Number, default: Date.now },
