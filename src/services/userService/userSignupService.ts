@@ -11,5 +11,6 @@ export const userSignupService = async (userData: Partial<IUser>): Promise<IUser
     }
     const user = new UserModel(userData);
     await user.save();
+    console.log(user)
     return user;
 }
