@@ -1,4 +1,5 @@
 export interface IUser {
+    _id?: string;
     email: string;
     phone: string;
     password: string;
@@ -12,4 +13,5 @@ export interface IUser {
     landmark?: string | null;
     createdAt?: Date | null;
     updatedAt?: Date | null;
+    __v?: number;
 }

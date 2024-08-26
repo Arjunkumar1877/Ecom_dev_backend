@@ -1,10 +1,13 @@
-import { Router, Request, Response } from 'express';
-
+import { Router } from 'express';
 import { validateUserSignup } from '../../middlewares/validationMiddleware';
-import { userController } from '../../config/initializers/initializeUserController';
+import UserController from '../../controllers/user/userController/userController';
+import { Req, Res } from '../../type/user/express';
 
 const router = Router();
+const userController = new UserController();
 
-router.post('/signup', validateUserSignup, (req:Request, res:Response) => userController.createUser(req, res));
+
+
+router.post('/signup', validateUserSignup, (req: Req, res: Res) => userController.createUser(req, res));
 
 export default router;
