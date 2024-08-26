@@ -1,29 +1,32 @@
-import { Request, Response } from 'express';
-import { validationResult } from 'express-validator';
+import { Req, Res } from '../../../type/user/express';
+import { passwordBcrypt } from '../../../services/userService/passwordBcrypt';
+import { IUser } from '../../../type/user/User';
+import UserModel from '../../../models/user/UserModel';
 
 class UserController {
 
-    private userSignupService: any;
-
-    constructor(userSignupService: any) {
-        this.userSignupService = userSignupService;
-    }
-
-    public async createUser(req: Request, res: Response): Promise<void | Response> {
+    public async createUser(req: Req, res: Res): Promise<void | Res> {
 
         try{
             console.log("inside create user function");
 
-            // Validate request
-            const errors = validationResult(req);
-            console.log(errors, "this is the errors");
-            if (!errors.isEmpty()) {
-                return res.status(400).json({ errors: errors.array() });
-            }
+           const { email, password, phone, address, state, city, pincode} = req.body;
+           const hashPassword: string = await passwordBcrypt(password);
+            
+            const userData: IUser = {
+                email: email,
+                phone: phone,
+                password: hashPassword,
+                address: address,
+                state: state,
+                city: city,
+                pincode: pincode
+              }
+            
+              const savedUser  = await UserModel.create(userData);
 
-            // Call the signup service to create the user
-            const user = await this.userSignupService(req.body);
-            return res.status(201).json(user);
+              res.status(200).json({message: "sucessfully save", data: savedUser});
+           
         }catch (err) {
             if (err instanceof Error) {
                 console.error('Error creating user:', err.message);
