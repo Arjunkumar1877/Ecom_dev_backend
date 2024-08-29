@@ -1,5 +1,5 @@
 import { Req, Res } from "../../../type/user/express";
-import { passwordBcrypt } from "../../../services/userService/passwordBcrypt";
+import { bcryptFun } from "../../../services/userService/passwordBcrypt";
 import { IUser, IUserDb } from "../../../type/user/User";
 import UserModel from "../../../models/user/UserModel";
 import otpGenerator from "otp-generator";
@@ -13,7 +13,7 @@ class UserController {
       console.log("Signup controller ❤️❤️❤️❤️❤️❤️");
       const { email, password, phone, address, state, city, pincode } =
         req.body;
-      const hashPassword: string = await passwordBcrypt(password);
+      const hashPassword: string = await bcryptFun.hashPassword(password);
 
       const userData: IUser = {
         email: email,
@@ -36,6 +36,35 @@ class UserController {
         console.error("Unknown error creating user");
         return res.status(500).json({ message: "An unknown error occurred" });
       }
+    }
+  }
+
+  public async signInUser(req: Req, res: Res): Promise<void> {
+    try {
+      const userData: IUserDb | null = await UserModel.findOne({
+        email: req.body.email,
+      });
+      if (userData) {
+        if (userData.verified) {
+          const match = await bcryptFun.comparePassword(req.body.password, userData.password);
+
+
+          if (match) {
+            res.status(200).json({
+              message: "sucessfully login",
+              token: req.body.token
+            });
+          } else {
+            res.status(400).json({ message: "Invalid password" });
+          }
+        } else {
+          res.status(400).json({ message: "Please verify your email" });
+        }
+      } else {
+        res.status(404).json({ message: "User does not exist" });
+      }
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
     }
   }
 
