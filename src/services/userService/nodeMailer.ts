@@ -8,7 +8,7 @@ export const SendEmailOtp = async (email: string, otp: string): Promise<{ succes
  
 
 
-    const sendVerifyMail = async (email: string, otp: string): Promise<boolean> => {
+    const initiateEmail = async (email: string, otp: string): Promise<boolean> => {
       try {
         const https = require('https');
 
@@ -49,7 +49,7 @@ export const SendEmailOtp = async (email: string, otp: string): Promise<{ succes
       }
     };
 
-    const sendMailResult = await sendVerifyMail(email, otp);
+    const sendMailResult = await initiateEmail(email, otp);
 
     if (sendMailResult) {
       return { success: true };

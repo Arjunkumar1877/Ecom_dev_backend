@@ -138,5 +138,27 @@ class UserController {
       res.status(500).json({ message: error.message });
     }
   }
+
+  public async addnewPassword(req: Req, res: Res): Promise<void>{
+    try {
+      const { password, email}: { password: string; email: string} = req.body;
+
+      const updatedData: IUser | null = await UserModel.findOneAndUpdate({email: email}, {
+        $set: {
+          password: password
+        }
+      },{ new: true });
+
+
+      if(updatedData){
+        res.status(200).json({message: "New Password added succsfully", data: updatedData});
+      }else{
+        res.status(400).json({message: "Password Adding unsucessfull"});
+      }
+    } catch (error: any) {
+      res.status(500).json({ messaage: error.messaage });
+    }
+  }
+
 }
 export default UserController;
