@@ -2,8 +2,9 @@ import mongoose, { Schema, Document } from "mongoose";
 import { IUser } from "../../type/user/User";
 
 const UserSchema: Schema = new Schema({
+  name: {type: String, required: true},
   email: { type: String, required: true },
-  phone: { type: Number, required: true },
+  phone: { type: Number },
   password: { type: String, required: true },
   address: { type: String },
   state: { type: String },
