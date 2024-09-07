@@ -29,6 +29,11 @@ router.post('/login', generateJwt, (req: Req, res: Res) => userController.signIn
 router.post('/add_password', (req: Req, res: Res) => userController.addnewPassword(req, res));
 
 
+// ********************************************| GOOGLE AUTH CHECK AND LOGIN *******************************************************************************************************************************************************************|
+router.post('/google', (req: Req, res: Res) => userController.googleAuth(req, res));
+
+
+
 
 
 

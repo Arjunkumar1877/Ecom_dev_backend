@@ -11,11 +11,12 @@ class UserController {
     try {
       console.log("inside create user function");
       console.log("Signup controller ❤️❤️❤️❤️❤️❤️");
-      const { email, password, phone, address, state, city, pincode } =
+      const { email, password, phone, address, state, city, pincode, name } =
         req.body;
       const hashPassword: string = await bcryptFun.hashPassword(password);
 
       const userData: IUser = {
+        name: name,
         email: email,
         phone: phone,
         password: hashPassword,
@@ -158,6 +159,42 @@ class UserController {
     } catch (error: any) {
       res.status(500).json({ messaage: error.messaage });
     }
+  }
+
+  public async  googleAuth(req: Req, res: Res): Promise<void>{
+   try{
+
+    const str = 'abcdefghijklmnopq';
+    let password = "";
+    for(let i = 0; i < 8; i++){
+       password += str[Math.floor(Math.random() * i) % str.length]
+    }
+
+    const exsistinguser = await UserModel.findOne({email: req.body.email});
+    if(exsistinguser){
+      res.status(200).json({message: "success", data: exsistinguser});
+    }else{
+      const newData: { name: string; email: string; password: string; image: string} = {
+        name: req.body.name,
+        email: req.body.email,
+        password: password,
+        image: req.body.googlePhotoUrl
+      }
+
+      const createduser  = await UserModel.create(newData);
+
+      if(createduser){
+        res.status(200).json({message: "User registered succesfully", data: createduser});
+      }else{
+        res.status(400).json({message: "Error creating user"});
+      }
+
+    }
+
+
+   }catch(error: any){
+    res.status(500).json({message: error.messaage})
+   }
   }
 
 }
