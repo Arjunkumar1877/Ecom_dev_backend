@@ -1,9 +1,9 @@
-import { Req, Res } from "../../../type/user/express";
-import { bcryptFun } from "../../../services/userService/passwordBcrypt";
-import { IUser, IUserDb } from "../../../type/user/User";
-import UserModel from "../../../models/user/UserModel";
+import { Req, Res } from "../../type/user/express";
+import { bcryptFun } from "../../services/userService/passwordBcrypt";
+import { IUser, IUserDb } from "../../type/user/User";
+import UserModel from "../../models/user/userModel";
 import otpGenerator from "otp-generator";
-import { SendEmailOtp } from "../../../services/userService/nodeMailer";
+import { SendEmailOtp } from "../../services/userService/nodeMailer";
 import { Document } from "mongoose";
 
 class UserController {
@@ -32,10 +32,10 @@ class UserController {
     } catch (err) {
       if (err instanceof Error) {
         console.error("Error creating user:", err.message);
-        return res.status(500).json({ message: err.message });
+        return res.status(500).json({ message: err.message, data: null });
       } else {
         console.error("Unknown error creating user");
-        return res.status(500).json({ message: "An unknown error occurred" });
+        return res.status(500).json({ message: "An unknown error occurred" , data: null});
       }
     }
   }
@@ -49,23 +49,25 @@ class UserController {
         if (userData.verified) {
           const match = await bcryptFun.comparePassword(req.body.password, userData.password);
 
-
           if (match) {
-            res.status(200).json({
-              message: "sucessfully login",
-              token: req.body.token
+            res.status(200)
+            .cookie('token', req.body.token, { httpOnly: true, secure: true }) 
+            .json({
+              message: "successfully login",
+              data: null
             });
+          
           } else {
-            res.status(400).json({ message: "Invalid password" });
+            res.status(400).json({ message: "Invalid password", data: null });
           }
         } else {
-          res.status(400).json({ message: "Please verify your email" });
+          res.status(400).json({ message: "Please verify your email", data: null });
         }
       } else {
-        res.status(404).json({ message: "User does not exist" });
+        res.status(404).json({ message: "User does not exist", data: null });
       }
     } catch (error: any) {
-      res.status(500).json({ message: error.message });
+      res.status(500).json({ message: error.message, data: null });
     }
   }
 
@@ -94,18 +96,19 @@ class UserController {
           OTP
         );
         if (EmailOtpSend.success) {
-          res.status(200).json({ message: "The email was sent successfully" });
+          res.status(200).json({ message: "The email was sent successfully", data: null });
         } else {
           res
             .status(200)
             .json({
               message:
                 "There is  an issue on sending email please try again later",
+                data: null
             });
         }
       }
     } catch (error: any) {
-      res.status(500).json({ messaage: error.messaage });
+      res.status(500).json({ messaage: error.messaage, data: null });
     }
   }
 
@@ -121,7 +124,7 @@ class UserController {
           const savedUserData = await (userData as Document).save();
 
           if (savedUserData) {
-            res.status(200).json({ message: "OTP verified successfully" });
+            res.status(200).json({ message: "OTP verified successfully", data: null });
           } else {
             res
               .status(500)
@@ -130,10 +133,10 @@ class UserController {
               });
           }
         } else {
-          res.status(400).json({ message: "Invalid OTP" });
+          res.status(400).json({ message: "Invalid OTP", data: null });
         }
       } else {
-        res.status(404).json({ message: "User does not exist" });
+        res.status(404).json({ message: "User does not exist", data: null });
       }
     } catch (error: any) {
       res.status(500).json({ message: error.message });
@@ -154,10 +157,10 @@ class UserController {
       if(updatedData){
         res.status(200).json({message: "New Password added succsfully", data: updatedData});
       }else{
-        res.status(400).json({message: "Password Adding unsucessfull"});
+        res.status(400).json({message: "Password Adding unsucessfull", data: null});
       }
     } catch (error: any) {
-      res.status(500).json({ messaage: error.messaage });
+      res.status(500).json({ messaage: error.messaage , data: null});
     }
   }
 
@@ -186,16 +189,16 @@ class UserController {
       if(createduser){
         res.status(200).json({message: "User registered succesfully", data: createduser});
       }else{
-        res.status(400).json({message: "Error creating user"});
+        res.status(400).json({message: "Error creating user", data: null});
       }
 
     }
 
 
    }catch(error: any){
-    res.status(500).json({message: error.messaage})
+    res.status(500).json({message: error.messaage, data: null})
    }
   }
 
 }
-export default UserController;
+export const userController = new UserController();
