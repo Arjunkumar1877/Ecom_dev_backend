@@ -167,11 +167,13 @@ class UserController {
   public async  googleAuth(req: Req, res: Res): Promise<void>{
    try{
 
+    console.log("gooogle auth 📀📀📀📀🔥🔥🔥🔥💕💕💕")
     const str = 'abcdefghijklmnopq';
     let password = "";
     for(let i = 0; i < 8; i++){
        password += str[Math.floor(Math.random() * i) % str.length]
     }
+    const ecnryptedPassword: string = await bcryptFun.hashPassword(password)
 
     const exsistinguser = await UserModel.findOne({email: req.body.email});
     if(exsistinguser){
@@ -180,14 +182,14 @@ class UserController {
       const newData: { name: string; email: string; password: string; image: string} = {
         name: req.body.name,
         email: req.body.email,
-        password: password,
+        password: ecnryptedPassword,
         image: req.body.googlePhotoUrl
       }
 
       const createduser  = await UserModel.create(newData);
 
       if(createduser){
-        res.status(200).json({message: "User registered succesfully", data: createduser});
+        res.status(200).json({message: "success", data: createduser});
       }else{
         res.status(400).json({message: "Error creating user", data: null});
       }
